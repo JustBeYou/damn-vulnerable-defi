@@ -10,7 +10,8 @@ Visit [damnvulnerabledefi.xyz](https://damnvulnerabledefi.xyz)
 
 ## Progress
 
-1. [ ] Unstoppable
+1. [X] Unstoppable - transfer funds from attacker DVT balance
+directly to the DVT balance of the vault - 00h:45m
 2. [ ] Naive receiver
 3. [ ] Truster
 4. [ ] Side Entrance
