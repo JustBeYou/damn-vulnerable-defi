@@ -8,12 +8,20 @@ Featuring flash loans, price oracles, governance, NFTs, lending pools, smart con
 
 Visit [damnvulnerabledefi.xyz](https://damnvulnerabledefi.xyz)
 
-## Help
+## Progress
 
-For Q&A and troubleshooting running Damn Vulnerable DeFi, go [here](https://github.com/tinchoabbate/damn-vulnerable-defi/discussions/categories/support-q-a-troubleshooting).
-
-## Disclaimer
-
-All Solidity code, practices and patterns in this repository are DAMN VULNERABLE and for educational purposes only.
-
-DO NOT USE IN PRODUCTION.
+1. [ ] Unstoppable
+2. [ ] Naive receiver
+3. [ ] Truster
+4. [ ] Side Entrance
+5. [ ] The Rewarder
+6. [ ] Selfie
+7. [ ] Compromised
+8. [ ] Puppet
+9. [ ] Puppet V2
+10. [ ] Free Rider
+11. [ ] Backdoor
+12. [ ] Climber
+13. [ ] Wallet Mining
+14. [ ] Puppet V3
+15. [ ] ABI Smuggling
