@@ -17,7 +17,9 @@ directly to the DVT balance of the vault
 4. [X] Side Entrance - **00h:40m** - use pool's funds to deposit in attacker's account, spent quite a
 little bit of time reading about call/transfer/send, even if not really necessary
 5. [X] The Rewarder - **00h:35m** - dillution using lended funds
-6. [ ] Selfie
+6. [X] Selfie - **01h:00m** - take advantage of the public snapshop function, lost a lot of time
+because I was sending all the Wei in the executed action call so no gas remained for running
+the code
 7. [ ] Compromised
 8. [ ] Puppet
 9. [ ] Puppet V2
