@@ -29,7 +29,7 @@ contract SideEntranceLenderPool {
 
     function withdraw() external {
         uint256 amount = balances[msg.sender];
-        
+
         delete balances[msg.sender];
         emit Withdraw(msg.sender, amount);
 
