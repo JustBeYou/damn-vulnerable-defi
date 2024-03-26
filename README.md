@@ -20,7 +20,7 @@ little bit of time reading about call/transfer/send, even if not really necessar
 6. [X] Selfie - **01h:00m** - take advantage of the public snapshop function, lost a lot of time
 because I was sending all the Wei in the executed action call so no gas remained for running
 the code
-7. [ ] Compromised
+7. [X] Compromised - **00:35m** - leaked private key, hardhat in JS is a pain to use, no typing :(
 8. [ ] Puppet
 9. [ ] Puppet V2
 10. [ ] Free Rider
