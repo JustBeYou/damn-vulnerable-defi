@@ -24,7 +24,7 @@ the code
 8. [X] Puppet - **01h:30m** - lost a lot of fucking time because `Transaction reverted: function selector was not recognized and there's no fallback nor receive function`. still can't compile
 a contract that interacts with the damn uniswap. took only five minutes after deciding to solve it in
 JS directly. exploit the lack of liquidity.
-9. [ ] Puppet V2
+9. [X] Puppet V2 - **01h:10m** - price manipulation using borrowed money, still getting used to the APIs
 10. [ ] Free Rider
 11. [ ] Backdoor
 12. [ ] Climber

