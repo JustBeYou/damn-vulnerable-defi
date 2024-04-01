@@ -25,7 +25,10 @@ the code
 a contract that interacts with the damn uniswap. took only five minutes after deciding to solve it in
 JS directly. exploit the lack of liquidity.
 9. [X] Puppet V2 - **01h:10m** - price manipulation using borrowed money, still getting used to the APIs
-10. [ ] Free Rider
+10. [X] Free Rider - **02h:30m** - use UniSwap loans to buy NFTs then exploit a bug in how the market
+checks if you have enough funds to buy all the NFTs using only the funds necessary to buy one;
+finllly, buy the tokens from yourself multiple times to exploit the bug again and drain the
+funds of the market; finally get the price; NICE
 11. [ ] Backdoor
 12. [ ] Climber
 13. [ ] Wallet Mining
