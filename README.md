@@ -29,8 +29,10 @@ JS directly. exploit the lack of liquidity.
 checks if you have enough funds to buy all the NFTs using only the funds necessary to buy one;
 finllly, buy the tokens from yourself multiple times to exploit the bug again and drain the
 funds of the market; finally get the price; NICE
-11. [ ] Backdoor - **02h:00** - WIP
-12. [ ] Climber
+11. [ ] Backdoor - **02h:00m** - WIP lots of time reading about solidity debugging, it's simply an awful experience;
+we can initialize wallets in the name of somebody else and add ourselves as owners also
+12. [ ] Climber - **00h:35m** - WIP ClimberTimeLock execute calls before checking the if they are allowed
+to be executed, this can result in the manipulation of the state of the contract itself
 13. [ ] Wallet Mining
 14. [ ] Puppet V3
 15. [ ] ABI Smuggling
