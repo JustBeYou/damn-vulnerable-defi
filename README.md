@@ -29,7 +29,7 @@ JS directly. exploit the lack of liquidity.
 checks if you have enough funds to buy all the NFTs using only the funds necessary to buy one;
 finllly, buy the tokens from yourself multiple times to exploit the bug again and drain the
 funds of the market; finally get the price; NICE
-11. [ ] Backdoor
+11. [ ] Backdoor - **02h:00** - WIP
 12. [ ] Climber
 13. [ ] Wallet Mining
 14. [ ] Puppet V3
