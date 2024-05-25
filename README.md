@@ -33,6 +33,7 @@ funds of the market; finally get the price; NICE
 we can initialize wallets in the name of somebody else and add ourselves as owners also
 12. [ ] Climber - **00h:35m** - WIP ClimberTimeLock execute calls before checking the if they are allowed
 to be executed, this can result in the manipulation of the state of the contract itself
-13. [ ] Wallet Mining
+13. [ ] Wallet Mining - **00h:35m** - WIP we can control the target address of the newly deployed contract
+and we can target it at the DEPOSIT_ADDRESS
 14. [ ] Puppet V3
 15. [ ] ABI Smuggling
