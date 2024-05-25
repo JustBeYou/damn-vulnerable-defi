@@ -37,4 +37,5 @@ to be executed, this can result in the manipulation of the state of the contract
 and we can target it at the DEPOSIT_ADDRESS
 14. [ ] Puppet V3 - **02h:15m** - WIP read about automatic market making, providing liquidity, impermanent loss, concentrated
 liquidity and other interesting stuff; read the paper on uniswap v1 and v3; price manipulation AGAIN.
-15. [ ] ABI Smuggling
+15. [ ] ABI Smuggling - **01h:00** - WIP we can bruteforce the action id using additional call data and run an unauthorized
+sweep

@@ -4,12 +4,12 @@ const { expect } = require('chai');
 describe('[Challenge] ABI smuggling', function () {
     let deployer, player, recovery;
     let token, vault;
-    
+
     const VAULT_TOKEN_BALANCE = 1000000n * 10n ** 18n;
 
     before(async function () {
         /** SETUP SCENARIO - NO NEED TO CHANGE ANYTHING HERE */
-        [ deployer, player, recovery ] = await ethers.getSigners();
+        [deployer, player, recovery] = await ethers.getSigners();
 
         // Deploy Damn Valuable Token contract
         token = await (await ethers.getContractFactory('DamnValuableToken', deployer)).deploy();
@@ -19,6 +19,19 @@ describe('[Challenge] ABI smuggling', function () {
         expect(await vault.getLastWithdrawalTimestamp()).to.not.eq(0);
 
         // Set permissions
+        /**
+    "6f85c7e4": "WAITING_PERIOD()",
+    "82ee0d1d": "WITHDRAWAL_LIMIT()",
+    "1cff79cd": "execute(address,bytes)",
+    "3e152499": "getActionId(bytes4,address,address)",
+    "266df782": "getLastWithdrawalTimestamp()",
+    "158ef93e": "initialized()",
+    "b4d2388f": "permissions(bytes32)",
+    "aeabae6b": "setPermissions(bytes32[])",
+    "85fb709d": "sweepFunds(address,address)",
+    "d9caed12": "withdraw(address,address,uint256)"
+         */
+
         const deployerPermission = await vault.getActionId('0x85fb709d', deployer.address, vault.address);
         const playerPermission = await vault.getActionId('0xd9caed12', player.address, vault.address);
         await vault.setPermissions([deployerPermission, playerPermission]);
@@ -45,6 +58,9 @@ describe('[Challenge] ABI smuggling', function () {
 
     it('Execution', async function () {
         /** CODE YOUR SOLUTION HERE */
+
+        const victim = await (await ethers.getContractFactory('TestVictim', deployer)).deploy();
+        await (await ethers.getContractFactory('AttackerAbi', deployer)).deploy(victim.address);
     });
 
     after(async function () {
