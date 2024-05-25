@@ -35,5 +35,6 @@ we can initialize wallets in the name of somebody else and add ourselves as owne
 to be executed, this can result in the manipulation of the state of the contract itself
 13. [ ] Wallet Mining - **00h:35m** - WIP we can control the target address of the newly deployed contract
 and we can target it at the DEPOSIT_ADDRESS
-14. [ ] Puppet V3
+14. [ ] Puppet V3 - **02h:15m** - WIP read about automatic market making, providing liquidity, impermanent loss, concentrated
+liquidity and other interesting stuff; read the paper on uniswap v1 and v3; price manipulation AGAIN.
 15. [ ] ABI Smuggling
