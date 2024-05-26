@@ -46,8 +46,9 @@ describe('[Challenge] Backdoor', function () {
 
     it('Execution', async function () {
         /** CODE YOUR SOLUTION HERE */
+        console.log({ masterCopy: masterCopy.address })
         const contractFactory = await ethers.getContractFactory('BackdoorAttacker', player);
-        const contract = await contractFactory.deploy(masterCopy.address, walletFactory.address, walletRegistry.address, { gasLimit: 5000000 });
+        const contract = await contractFactory.deploy(masterCopy.address, walletFactory.address, walletRegistry.address, users, { gasLimit: 10000000 });
         const receipt = await contract.deployTransaction.wait();
 
         for (const ev of receipt.events) {
