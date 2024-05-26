@@ -29,12 +29,11 @@ JS directly. exploit the lack of liquidity.
 checks if you have enough funds to buy all the NFTs using only the funds necessary to buy one;
 finllly, buy the tokens from yourself multiple times to exploit the bug again and drain the
 funds of the market; finally get the price; NICE
-11. [ ] Backdoor - **03h:00m** - WIP lots of time reading about solidity debugging, it's simply an awful experience;
-we can add a trusted module to the wallet at its creation and use that to drain the funds;
-12. [ ] Climber - **00h:35m** - WIP ClimberTimeLock execute calls before checking the if they are allowed
+11. [ ] Backdoor - **03h:00m** - WIP lots of time reading about solidity debugging, it's simply an awful experience; we can add a trusted module to the wallet at its creation and use that to drain the funds;
+12. [X] Climber - **01h:50m** - ClimberTimeLock execute calls before checking the if they are allowed
 to be executed, this can result in the manipulation of the state of the contract itself
-13. [ ] Wallet Mining - **00h:35m** - WIP we can control the target address of the newly deployed contract
-and we can target it at the DEPOSIT_ADDRESS
+13. [ ] Wallet Mining - **02h:35m** - WIP we can control the target address of the newly deployed contract
+and we can target it at the DEPOSIT_ADDRESS + replay attacks for the gnosis contracts
 14. [ ] Puppet V3 - **02h:15m** - WIP read about automatic market making, providing liquidity, impermanent loss, concentrated
 liquidity and other interesting stuff; read the paper on uniswap v1 and v3; price manipulation AGAIN.
 15. [X] ABI Smuggling - **03h:00** - mess up with the calldata layout, because execute() function loads the selector at a 
