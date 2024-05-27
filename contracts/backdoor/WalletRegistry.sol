@@ -72,7 +72,7 @@ contract WalletRegistry is IProxyCreationCallback, Ownable {
         bytes calldata initializer,
         uint256
     ) external override {
-        console.log("WALLET CREATED");
+        console.log("WALLET CREATED", singleton);
 
         if (token.balanceOf(address(this)) < PAYMENT_AMOUNT) {
             // fail early

